@@ -13,45 +13,53 @@ import {
 } from '@nestjs/common';
 import { CreateUserDto } from './dtos/create-user.dto';
 import { UpdateUserDto } from './dtos/update-user.dto';
+import { UserEntity } from './Users.entity';
+import { UserService } from './users.service';
 
 @Controller('users')
 export class UserController {
+  constructor(private readonly userService :UserService ) {
+
+  }
+
   @Get()
-  findAllRecord(): number[] {
-    return [1, 2, 3, 4];
+  findAllRecord(): UserEntity[] {
+    return this.userService.findeAllUsers()
   }
 
   @Get(':id')
-  findOneRecord(@Param('id',ParseIntPipe) id: string): string {
-    console.log(typeof id)
-    return id;
+  findOneRecord(@Param('id') id: string): UserEntity | undefined {
+    return this.userService.findOneUser(id)
   }
 
   @Post()
-  addRecord(@Body(ValidationPipe) userData: CreateUserDto): CreateUserDto {
-    return userData;
+  addRecord(@Body(ValidationPipe) createUserDto: CreateUserDto): CreateUserDto {
+    return this.userService.createUser( createUserDto)
+
   }
 
-  @Put(':id')
-  UpdateRecord(
-    @Param('id') id: string,
-    @Body(ValidationPipe) userData: UpdateUserDto,
-  ): UpdateUserDto {
-    return { id, ...userData };
-  }
 
-  @Patch(':id')
-  EditRecord(
-    @Param('id') id: string,
-    @Body(ValidationPipe) userData: UpdateUserDto,
-  ): UpdateUserDto {
-    return { id, ...userData };
-  }
+@Put(':id')
+updateRecord(
+  @Param('id') id: string,
+  @Body(ValidationPipe) updateUserDto: UpdateUserDto,
+): UserEntity {
 
-  @Delete(':id')
-  @HttpCode(204)
-  DeleteRecord(@Param('id') id: string): void {
-    console.log(id);
-    return;
-  }
+  return this.userService.updateUser(id ,updateUserDto)
+
+}
+
+@Patch(':id')
+editRecord(
+  @Param('id') id: string,
+  @Body(ValidationPipe) updateUserDto: UpdateUserDto,
+): UserEntity {
+  return this.userService.editUser(id, updateUserDto)
+}
+
+@Delete(':id')
+@HttpCode(204)
+deleteRecord(@Param('id') id: string): void {
+ return this.userService.deleteUser(id)
+}
 }
