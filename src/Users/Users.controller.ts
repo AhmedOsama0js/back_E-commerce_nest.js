@@ -5,9 +5,11 @@ import {
   Get,
   HttpCode,
   Param,
+  ParseIntPipe,
   Patch,
   Post,
   Put,
+  ValidationPipe,
 } from '@nestjs/common';
 import { CreateUserDto } from './dtos/create-user.dto';
 import { UpdateUserDto } from './dtos/update-user.dto';
@@ -20,19 +22,20 @@ export class UserController {
   }
 
   @Get(':id')
-  findOneRecord(@Param('id') id: string): string {
+  findOneRecord(@Param('id',ParseIntPipe) id: string): string {
+    console.log(typeof id)
     return id;
   }
 
   @Post()
-  addRecord(@Body() userData: CreateUserDto): CreateUserDto {
+  addRecord(@Body(ValidationPipe) userData: CreateUserDto): CreateUserDto {
     return userData;
   }
 
   @Put(':id')
   UpdateRecord(
     @Param('id') id: string,
-    @Body() userData: UpdateUserDto,
+    @Body(ValidationPipe) userData: UpdateUserDto,
   ): UpdateUserDto {
     return { id, ...userData };
   }
@@ -40,7 +43,7 @@ export class UserController {
   @Patch(':id')
   EditRecord(
     @Param('id') id: string,
-    @Body() userData: UpdateUserDto,
+    @Body(ValidationPipe) userData: UpdateUserDto,
   ): UpdateUserDto {
     return { id, ...userData };
   }
